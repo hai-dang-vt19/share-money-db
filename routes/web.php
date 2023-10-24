@@ -19,7 +19,7 @@ Route::get('/', [Controller::class, 'index'])->name('index');
 Route::post('/lgin', [Controller::class, 'login'])->name('login');
 Route::get('/lgout', [Controller::class, 'logout'])->middleware('auth')->name('logout');
 
-Route::get('/a', [Controller::class, 'insertAdmin'])->middleware('auth')->name('insertAdmin');
+Route::get('/cAdmin', [Controller::class, 'insertAdmin'])->name('insertAdmin');
 
 Route::post('/post/user', [Controller::class, 'insertUser'])->middleware('auth')->name('insertUser');
 Route::post('/post/pay', [Controller::class, 'insertPay'])->middleware('auth')->name('insertPay');
@@ -32,3 +32,5 @@ Route::get('/truncate/pay', [Controller::class, 'truncatePay'])->middleware('aut
 Route::get('/destroy/member/pay', [Controller::class, 'destroyMemberPay'])->middleware('auth')->name('destroyMemberPay');
 
 Route::get('/export', [Controller::class, 'export'])->middleware('auth')->name('export');
+
+Route::post('/import', [Controller::class, 'import'])->middleware('auth')->name('import');

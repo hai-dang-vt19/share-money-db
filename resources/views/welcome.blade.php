@@ -35,22 +35,22 @@
                     @endcan
                 >
                 </i>
-                @can('admin')
-                    <a href="{{ route('logout') }}" class="btn btn-outline-danger btn-sm ms-4">Đăng xuất</a>
-                    <a href="{{ route('export') }}" class="btn btn-primary btn-sm ms-1">Export Excel</a>
-                @endcan
             </p>
             @can('admin')
                 <div class="collapse show" id="collapseExample">
                     <div class="card card-body" >
                         <div class="row">
                             <div class="col-md-7">
+                                <a href="{{ route('logout') }}" class="btn btn-outline-danger btn-sm float-end">Đăng xuất</a>
                                 <form id="form-department" action="{{ route('insertPay') }}" method="POST">
                                     @csrf
-                                    <h5>Chọn ban tham gia 
-                                        <button type="button" id="submit-department"
-                                        class="btn btn-success btn-sm">Xác nhận</button>
-                                    </h5>
+                                    <div class="d-flex">
+                                        <button type="button" id="submit-department"class="btn btn-success btn-sm">Xác nhận</button>
+                                        <div class="form-check form-switch mt-1 ms-3">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheck" name="checkdel">
+                                            <label class="form-check-label" for="flexSwitchCheck">Xóa ban</label>
+                                        </div>
+                                    </div>
                                     <hr>
                                     @foreach ($department as $itm_department)
                                         <div class="form-check">
@@ -83,6 +83,15 @@
                                     </div>
                                     <div class="col-md-12">
                                         <button class="btn btn-secondary w-100" type="submit">Lưu</button>
+                                    </div>
+                                </form>
+                                <hr>
+                                <h6 class="text-center mt-3">Import excel</h6>
+                                <form action="{{ route('import') }}" method="post" enctype="multipart/form-data" class="mt-1">
+                                    @csrf
+                                    <div class="input-group">
+                                        <input type="file" name="file_user" class="form-control">
+                                        <button type="submit" class="input-group-text btn btn-dark">Import User</button>
                                     </div>
                                 </form>
                             </div>
@@ -122,11 +131,11 @@
         </div>
         <div class="mt-3 row d-flex justify-content-center">
             <div class="@can('admin') col-md @elsecannot('admin') col-md-8 @endcan table-responsive p-1">
-                <table class="table table-hover">
-                    <thead class="table-secondary">
+                <table class="table table-hover border" id="myTable">
+                    <thead class="table-dark align-middle">
                         <tr>
                             <th scope="col">STT</th>
-                            <th scope="col">Họ tên</th>
+                            <th scope="col"><input type="text" id="myInput" onkeyup="searchTBL()" placeholder="Tìm kiếm tên ..." class="form-control form-control-sm"></th>
                             <th scope="col">Ban</th>
                             <th scope="col">Số tiền</th>
                             <th scope="col" class="text-center">Ảnh CK</th>
@@ -134,21 +143,17 @@
                             @can('admin')
                                 <th scope="col" class="text-center">Tiền chi + ảnh QR</th>
                                 <th scope="col" class="text-center">
-                                    @if ($pay == '[]')
-                                        ...
-                                    @else
-                                        <a href="{{ route('truncatePay') }}" class="text-decoration-none"
-                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                            data-bs-title="Truncate Pay"
-                                        >
-                                            <i class='bx bx-refresh bx-spin bx-sm text-light bg-warning rounded-pill'></i>
-                                        </a>
-                                    @endif
+                                    <a href="{{ route('truncatePay') }}" class="text-decoration-none"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        data-bs-title="Truncate Pay"
+                                    >
+                                        <i class='bx bx-refresh bx-spin bx-sm text-light bg-warning rounded-pill'></i>
+                                    </a>
                                 </th>
                             @endcan
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="align-middle">
                         @if ($count > 0)
                             @foreach ($pay as $key => $itm_tb_pay)
                                 <tr
@@ -231,7 +236,10 @@
                     </tbody>
                     <tfoot class="table-dark">
                         <tr>
-                            <td colspan="@can('admin') 8 @elsecannot('admin') 6 @endcan">Tổng tiền: {{ number_format($sum) }}</td>
+                            <td colspan="@can('admin') 7 @elsecannot('admin') 6 @endcan">Tổng tiền: {{ number_format($sum) }}</td>
+                            @can('admin')
+                                <td><a href="{{ route('export') }}" class="btn btn-primary btn-sm">Export</a></td>
+                            @endcan
                         </tr>
                     </tfoot>
                 </table>
@@ -258,6 +266,29 @@
         document.getElementById("submit-login").addEventListener("click", function () {
             formlogin.submit();
         });
+    </script>
+    
+    <script>
+        function searchTBL() {
+          // Declare variables
+          var input, filter, table, tr, td, i, txtValue;
+          input = document.getElementById("myInput");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("myTable");
+          tr = table.getElementsByTagName("tr");
+
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0]; // Vị trí column tìm kiếm
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }
+          }
+        }
     </script>
 </body>
 

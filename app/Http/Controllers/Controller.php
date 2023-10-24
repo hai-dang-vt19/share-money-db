@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\pay;
 use App\Models\User;
 use App\Exports\PaysExport;
+use App\Imports\UsersImport;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -60,12 +61,13 @@ class Controller extends BaseController
             'department'=>'0',
             'roles'=>'0',
         ]);
-        return back();
+        return redirect()->route('index');
     }
 
     public function insertUser(Request $request){
         $name = $request->name_user;
         $department = $request->department_user;
+
         User::create([
             'name'=>$name,
             'department'=>$department,
@@ -76,13 +78,21 @@ class Controller extends BaseController
 
     public function insertPay(Request $request){
         $department = $request->department;
+
         for($p = 0; $p < count($department); $p++){
             $lst_user = User::where('department', $department[$p])->get('id');
-            foreach ($lst_user as $itm_lstUser) {
-                pay::updateOrCreate([
-                    'id_user'=>$itm_lstUser->id
-                ]);
+            if ($request->checkdel) {
+                User::where('department', $department[$p])->delete();
+            }else{
+                foreach ($lst_user as $itm_lstUser) {
+                    pay::updateOrCreate([
+                        'id_user'=>$itm_lstUser->id
+                    ]);
+                }
             }
+        }
+        if ($request->checkdel) {
+            return redirect()->route('index');
         }
         $sum = pay::sum('spending');
         if($sum > 0){
@@ -218,5 +228,10 @@ class Controller extends BaseController
     public function export() 
     {
         return Excel::download(new PaysExport, 'pays.xlsx');
+    }
+
+    public function import(Request $request){
+        Excel::import(new UsersImport, $request->file_user);
+        return redirect()->route('index');
     }
 }
