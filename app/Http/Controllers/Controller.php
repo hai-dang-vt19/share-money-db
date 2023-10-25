@@ -52,12 +52,12 @@ class Controller extends BaseController
         return view('welcome');
     }
 
-    public function insertAdmin(){
+    public function insertAdmin(Request $request){
         User::updateOrCreate([
-            'name'=>'admin',
-            'email'=>'admin@gmail.com',
+            'name'=>$request->tk,
+            'email'=>$request->tk,
         ],[
-            'password'=>Hash::make(12345678),
+            'password'=>Hash::make($request->mk),
             'department'=>'0',
             'roles'=>'0',
         ]);
@@ -134,7 +134,6 @@ class Controller extends BaseController
             $extension = $file ->getClientOriginalExtension();
             $name = $request->id.'.'.$extension;
             Storage::delete('public/'.$name);
-            // Storage::delete('public/'.$request->id);
             Storage::putFileAs('public', $file, $name);
             $pay->img = $name;
         };

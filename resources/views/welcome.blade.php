@@ -52,16 +52,18 @@
                                         </div>
                                     </div>
                                     <hr>
-                                    @foreach ($department as $itm_department)
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                value="{{ $itm_department->department }}" id="flexCheck{{$itm_department->department}}"
-                                                name="department[]">
-                                            <label class="form-check-label" for="flexCheck{{$itm_department->department}}">
-                                                {{ $itm_department->department }}
-                                            </label>
-                                        </div>
-                                    @endforeach
+                                    <div class="row container">
+                                        @foreach ($department as $itm_department)
+                                            <div class="form-check col-sm-3">
+                                                <input class="form-check-input" type="checkbox"
+                                                    value="{{ $itm_department->department }}" id="flexCheck{{$itm_department->department}}"
+                                                    name="department[]">
+                                                <label class="form-check-label" for="flexCheck{{$itm_department->department}}">
+                                                    {{ $itm_department->department }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </form>
                             </div>
                             <div class="col-md-4">
@@ -89,7 +91,10 @@
                                 <h6 class="text-center mt-3">Import excel</h6>
                                 <form action="{{ route('import') }}" method="post" enctype="multipart/form-data" class="mt-1">
                                     @csrf
-                                    <div class="input-group">
+                                    <div class="input-group"
+                                        data-bs-toggle="tooltip" data-bs-placement="left"
+                                        data-bs-title="Tên + ban, import từ row 2"
+                                    >
                                         <input type="file" name="file_user" class="form-control">
                                         <button type="submit" class="input-group-text btn btn-dark">Import User</button>
                                     </div>
@@ -105,13 +110,10 @@
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content">
                             <div class="modal-body">
-                                <div class="text-center mb-3">
-                                    <a href="{{ route('insertAdmin') }}" class="text-danger" style="cursor: default"><i class='bx bxs-heart bx-md'></i></a>
-                                </div>
                                 <form action="{{ route('login') }}" method="POST" id="form-login">
                                     @csrf
-                                    <input type="text" class="form-control mb-3" name="email" placeholder="Email">
-                                    <input type="password" class="form-control mb-3" name="password" placeholder="Password">
+                                    <input type="text" class="form-control mb-3" name="email" placeholder="Tài khoản">
+                                    <input type="password" class="form-control mb-3" name="password" placeholder="Mật khẩu">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="remember_token" id="remember">
                                         <label class="form-check-label" for="remember">
